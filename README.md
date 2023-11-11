@@ -10,4 +10,4 @@
 * Make sure the downloaded files are in the same directory as `main.py`. Now, you can simply run the script. You can also run with the `-f` option and provide a filename (i.e. `python main.py -f data.out`) to write the results to a file.
 
 **Notes**
-* Make sure the spreadsheet data is not malformed for checked-in participants (this should be done when each person checks in). You will probably get incorrect results otherwise.
+* Make sure the spreadsheet data is not malformed for checked-in participants (this should be done when each person checks in). You will probably get incorrect results otherwise. In particular, make sure there are no extraneous newlines at the end of the file, otherwise the script will not work.

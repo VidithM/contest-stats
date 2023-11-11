@@ -36,7 +36,7 @@ if(first_name_idx == -1 or last_name_idx == -1 or handle_idx == -1 or year_idx =
 
 standings_by_year = {}
 overall_standings = []
-print(first_name_idx)
+print(year_idx)
 print(columns)
 for participant in rows:
     first_name = participant[first_name_idx]
@@ -48,7 +48,7 @@ for participant in rows:
     else:
         year = int(participant[year_idx])
     checked = participant[checked_idx]
-    
+
     '''
     if(checked != 'yes'):
         continue
