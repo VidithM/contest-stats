@@ -8,7 +8,7 @@ soup = None
 
 def build_participants():
     global participants
-    
+
     content = ''
     with open('standings.html', 'r') as standings:
         content = standings.read()
@@ -31,7 +31,7 @@ def build_participants():
             continue
         
         # Valid participant, add to list
-        participants.append(handle.strip())
+        participants.append(handle.strip().lower())
 
 def get_participant(rank: int) -> str:
     if(participants == None):
