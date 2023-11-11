@@ -1,4 +1,4 @@
-from standings import *
+from standings import get_rank, valid_participant
 
 at = 0
 columns = []
@@ -16,6 +16,7 @@ first_name_idx = -1
 last_name_idx = -1
 handle_idx = -1
 year_idx = -1
+degree_idx = -1
 checked_idx = -1
 
 for i in range(len(columns)):
@@ -27,50 +28,86 @@ for i in range(len(columns)):
         handle_idx = i
     elif('Graduation Year' in columns[i]):
         year_idx = i
+    elif('Degree Type' in columns[i]):
+        degree_idx = i
     elif('Checked In' in columns[i]):
         checked_idx = i
 
-if(first_name_idx == -1 or last_name_idx == -1 or handle_idx == -1 or year_idx == -1):
+if(first_name_idx == -1 or last_name_idx == -1 or handle_idx == -1 or year_idx == -1 or degree_idx == -1 or checked_idx == -1):
     print('Required columns are not present in signups.tsv!')
     exit()
 
+checked_handles = {}
 standings_by_year = {}
 overall_standings = []
-print(year_idx)
-print(columns)
+
 for participant in rows:
     first_name = participant[first_name_idx]
     last_name = participant[last_name_idx]
     handle = participant[handle_idx].lower()
+    degree = participant[degree_idx]
+
+    if(handle in checked_handles):
+        continue
+    checked_handles[handle] = True
+
     year = -1
     if('+' in participant[year_idx]):
         year = int(participant[year_idx][:-1])
     else:
         year = int(participant[year_idx])
-    checked = participant[checked_idx]
-
-    '''
+    
+    if(checked_idx >= len(participant)):
+        continue
+    
+    checked = participant[checked_idx].strip()
+    
     if(checked != 'yes'):
         continue
-    '''
 
     if(valid_participant(handle)):
-        overall_standings.append((get_rank(handle), handle))
-        if(year in standings_by_year):
-            standings_by_year[year].append((get_rank(handle), handle))
+        overall_standings.append((get_rank(handle), handle, first_name, last_name))
+        if(degree == 'Undergraduate'):
+            if(year in standings_by_year):
+                standings_by_year[year].append((get_rank(handle), handle, first_name, last_name))
+            else:
+                standings_by_year[year] = [(get_rank(handle), handle, first_name, last_name)]
         else:
-            standings_by_year[year] = [(get_rank(handle), handle)]
+            if(degree in standings_by_year):
+                standings_by_year[degree].append((get_rank(handle), handle, first_name, last_name))
+            else:
+                standings_by_year[degree] = [(get_rank(handle), handle, first_name, last_name)]
     else:
         print(f'Handle "{handle}" does not exist in standings!')
 
+if('Graduate' in standings_by_year):
+    standings_by_year['Graduate'].sort()
+    print('=== GRADUATE STANDINGS: ===')
+    for i in range(len(standings_by_year['Graduate'])):
+        tup = standings_by_year['Graduate'][i]
+        print(f'{i + 1} ({tup[0] + 1}): {tup[1]}, {tup[2]} {tup[3]}')
+
+if('PhD' in standings_by_year):
+    standings_by_year['PhD'].sort()
+    print('=== PHD STANDINGS: ===')
+    for i in range(len(standings_by_year['PhD'])):
+        tup = standings_by_year['PhD'][i]
+        print(f'{i + 1} ({tup[0] + 1}): {tup[1]}, {tup[2]} {tup[3]}')
+
+print('\n')
+
 for elem in standings_by_year:
+    if(elem == 'Graduate' or elem == 'PhD'):
+        continue
     standings_by_year[elem].sort()
     print(f'=== C/O {elem} STANDINGS: ===')
     for i in range(len(standings_by_year[elem])):
-        print(f'{i + 1}: {standings_by_year[elem][i][1]}')
+        tup = standings_by_year[elem][i]
+        print(f'{i + 1} ({tup[0] + 1}): {tup[1]}, {tup[2]} {tup[3]}')
 
 overall_standings.sort()
 print('\n\n')
 print('=== OVERALL STANDINGS: ===')
 for i in range(len(overall_standings)):
-    print(f'{i + 1}: {overall_standings[i][1]}')
+    tup = overall_standings[i]
+    print(f'{i + 1}: {tup[1]}, {tup[2]} {tup[3]}')
