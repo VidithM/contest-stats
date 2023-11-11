@@ -1,4 +1,5 @@
 import sys
+from termcolor import colored, cprint
 from standings import get_rank, valid_participant
 
 out_file = None
@@ -7,6 +8,14 @@ if(len(sys.argv) > 1):
     assert(len(sys.argv) == 3)
     assert(sys.argv[1] == '-f')
     out_file = open(sys.argv[2], 'w')
+
+def print_error(content: str):
+    if(out_file == None):
+        cprint('[ERROR]: ', color='red', attrs=['bold'], end='')
+        cprint(content)
+    else:
+        print('[ERROR]: ', end='', file=out_file)
+        print(content, file=out_file)
 
 def print_line(content: str):
     if(out_file == None):
@@ -48,7 +57,7 @@ for i in range(len(columns)):
         checked_idx = i
 
 if(first_name_idx == -1 or last_name_idx == -1 or handle_idx == -1 or year_idx == -1 or degree_idx == -1 or checked_idx == -1):
-    print_line('Required columns are not present in signups.tsv!')
+    print_error('Required columns are not present in signups.tsv!')
     exit()
 
 checked_handles = {}
@@ -92,7 +101,9 @@ for participant in rows:
             else:
                 standings_by_year[degree] = [(get_rank(handle), handle, first_name, last_name)]
     else:
-        print_line(f'Handle "{handle}" does not exist in standings!')
+        print_error(f'Handle "{handle}" does not exist in standings!')
+
+print_line('\n')
 
 if('Graduate' in standings_by_year):
     standings_by_year['Graduate'].sort()
@@ -100,6 +111,7 @@ if('Graduate' in standings_by_year):
     for i in range(len(standings_by_year['Graduate'])):
         tup = standings_by_year['Graduate'][i]
         print_line(f'{i + 1} ({tup[0] + 1}): {tup[1]}, {tup[2]} {tup[3]}')
+    print_line('\n')
 
 if('PhD' in standings_by_year):
     standings_by_year['PhD'].sort()
@@ -107,8 +119,7 @@ if('PhD' in standings_by_year):
     for i in range(len(standings_by_year['PhD'])):
         tup = standings_by_year['PhD'][i]
         print_line(f'{i + 1} ({tup[0] + 1}): {tup[1]}, {tup[2]} {tup[3]}')
-
-print_line('\n')
+    print_line('\n')
 
 for elem in standings_by_year:
     if(elem == 'Graduate' or elem == 'PhD'):
@@ -118,9 +129,9 @@ for elem in standings_by_year:
     for i in range(len(standings_by_year[elem])):
         tup = standings_by_year[elem][i]
         print_line(f'{i + 1} ({tup[0] + 1}): {tup[1]}, {tup[2]} {tup[3]}')
+    print_line('\n')
 
 overall_standings.sort()
-print_line('\n\n')
 print_line('=== OVERALL STANDINGS: ===')
 for i in range(len(overall_standings)):
     tup = overall_standings[i]
