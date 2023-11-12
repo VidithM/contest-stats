@@ -1,6 +1,7 @@
 '''
 Parses Codeforces standings page
 '''
+import re
 from bs4 import BeautifulSoup
 
 participants = None
@@ -18,12 +19,14 @@ def build_participants():
     all_tr = soup.find_all('tr', attrs={'participantid': True})
     participants = []
 
+    search_attr = re.compile(r'^contestant-cell.*$')
+
     for i in range(len(all_tr)):
         td = None
         if(i % 2):
-            td = all_tr[i].find('td', attrs={'class': 'contestant-cell'})
+            td = all_tr[i].find('td', attrs={'class': search_attr})
         else:
-            td = all_tr[i].find('td', attrs={'class': 'contestant-cell dark'})
+            td = all_tr[i].find('td', attrs={'class': search_attr})
         
         # Check if they are unofficial, or virtual
         handle = td.text
