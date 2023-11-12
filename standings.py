@@ -10,7 +10,7 @@ def build_participants():
     global participants
 
     content = ''
-    with open('standings.html', 'r') as standings:
+    with open('standings.html', 'r', encoding='utf-8') as standings:
         content = standings.read()
 
     soup = BeautifulSoup(content, 'html.parser')

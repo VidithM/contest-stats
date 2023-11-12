@@ -7,7 +7,7 @@ out_file = None
 if(len(sys.argv) > 1):
     assert(len(sys.argv) == 3)
     assert(sys.argv[1] == '-f')
-    out_file = open(sys.argv[2], 'w')
+    out_file = open(sys.argv[2], 'w', encoding='utf-8')
 
 def print_error(content: str):
     if(out_file == None):
@@ -27,7 +27,7 @@ at = 0
 columns = []
 rows = []
 
-with open('signups.tsv', 'r') as signups:
+with open('signups.tsv', 'r', encoding='utf-8') as signups:
     for ln in signups:
         if(at == 0):
             columns = ln.split('\t')
